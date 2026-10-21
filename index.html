@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>🎆 С Днём отца!</title>
+    <style>
+        /* ---------- БАЗА ---------- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            min-height: 100vh;
+            min-height: 100dvh;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            background: linear-gradient(180deg, #0a0a1a 0%, #0f1628 40%, #1a2340 100%);
+            font-family: 'Segoe UI', 'Roboto', Arial, sans-serif;
+            padding: 16px;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+
+        /* ---------- КАРТОЧКА ---------- */
+        .card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            max-width: 680px;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            border-radius: 48px;
+            padding: 28px 24px 36px;
+            box-shadow: 0 40px 80px rgba(0, 0, 0, 0.7);
+            border: 1px solid rgba(255, 215, 0, 0.10);
+            text-align: center;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* ---------- ЗАГОЛОВКИ ---------- */
+        h1 {
+            color: #ffd700;
+            font-size: clamp(1.8rem, 6.5vw, 2.8rem);
+            text-shadow: 0 0 50px rgba(255, 215, 0, 0.35);
+            letter-spacing: 1px;
+            margin-bottom: 2px;
+            line-height: 1.2;
+            text-align: center;
+        }
+
+        .subtitle {
+            color: #c9c4e0;
+            font-size: clamp(0.8rem, 2vw, 1rem);
+            margin-bottom: 16px;
+            opacity: 0.85;
+        }
+
+        /* ---------- ИНСТРУКЦИЯ ---------- */
+        .instruction {
+            background: rgba(255, 215, 0, 0.08);
+            padding: 2px 12px;
+            border-radius: 60px;
+            border: 2px solid rgba(255, 215, 0, 0.22);
+            animation: pulseGlow 2.4s infinite ease-in-out;
+            margin-bottom: 13%;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .instruction .icon {
+            font-size: clamp(1.4rem, 4vw, 2rem);
+        }
+
+        .instruction .text {
+            color: #ffe9a8;
+            font-size: clamp(0.9rem, 2.2vw, 1.15rem);
+            font-weight: 600;
+            letter-spacing: 0.3px;
+            white-space: nowrap;
+        }
+
+        @keyframes pulseGlow {
+            0%, 100% { box-shadow: 0 0 15px rgba(255, 215, 0, 0.06); }
+            50% { box-shadow: 0 0 45px rgba(255, 215, 0, 0.22); }
+        }
+
+        /* ---------- НЕБО (поле для салюта) ---------- */
+        .sky-wrapper {
+            display: flex;
+            justify-content: center;
+            width: 100%;
+            margin: 2px 0 8px;
+            position: relative;
+            height: clamp(180px, 45vw, 260px);
+            border-radius: 24px;
+            overflow: hidden;
+            background: radial-gradient(ellipse at 50% 100%, #1a2340 0%, #0a0a1a 80%);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .sky {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        /* звёздочки на фоне */
+        .star {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: #fff;
+            border-radius: 50%;
+            opacity: 0.6;
+            animation: twinkle 3s infinite ease-in-out;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.2; transform: scale(1); }
+            50% { opacity: 0.9; transform: scale(1.4); }
+        }
+
+        /* силуэт горизонта */
+        .horizon {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 18%;
+            background: linear-gradient(to top, #05050f, #0a0a1a);
+            border-radius: 50% 50% 0 0 / 30% 30% 0 0;
+        }
+
+        /* ---------- ЗАЛП САЛЮТА ---------- */
+        .firework {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+        }
+
+        /* искры */
+        .spark {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            opacity: 0;
+            box-shadow: 0 0 10px currentColor, 0 0 20px currentColor;
+        }
+
+        /* анимация: искра разлетается, покачиваясь и затухая */
+        @keyframes sparkFly {
+            0% {
+                transform: translate(-50%, -50%) scale(0.3);
+                opacity: 1;
+            }
+            70% {
+                opacity: 0.9;
+            }
+            100% {
+                transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) scale(0.6);
+                opacity: 0;
+            }
+        }
+
+        /* вспышка в центре залпа */
+        .flash {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            background: radial-gradient(circle, #fff, transparent 70%);
+            animation: flashPop 0.5s ease-out forwards;
+            pointer-events: none;
+        }
+
+        @keyframes flashPop {
+            0% { transform: translate(-50%, -50%) scale(0); opacity: 1; }
+            50% { transform: translate(-50%, -50%) scale(3); opacity: 0.8; }
+            100% { transform: translate(-50%, -50%) scale(5); opacity: 0; }
+        }
+
+        /* ---------- СЧЁТЧИК ---------- */
+        .counter {
+            color: #ffe9a8;
+            font-size: clamp(0.9rem, 2.2vw, 1.1rem);
+            margin-top: 12px;
+            background: rgba(0, 0, 0, 0.35);
+            padding: 6px 22px;
+            border-radius: 40px;
+            font-weight: 600;
+            letter-spacing: 0.4px;
+            border: 1px solid rgba(255, 215, 0, 0.12);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+        }
+
+        /* ---------- ПОЖЕЛАНИЕ ---------- */
+        .wish {
+            display: none;
+            margin-top: 18px;
+            padding: 20px 18px;
+            background: rgba(255, 215, 0, 0.07);
+            border-radius: 24px;
+            border: 2px solid #ffd700;
+            animation: popIn 0.7s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            width: 100%;
+        }
+
+        .wish.show {
+            display: block;
+        }
+
+        .wish h2 {
+            color: #ffd700;
+            font-size: clamp(1.5rem, 4.5vw, 2rem);
+            margin-bottom: 6px;
+        }
+
+        .wish p {
+            color: #e8e4f5;
+            font-size: clamp(0.95rem, 2.2vw, 1.15rem);
+            line-height: 1.6;
+        }
+
+        .wish img {
+            margin-top: 12px;
+            max-width: 40%;
+            border-radius: 16px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .wish .signature {
+            margin-top: 8px;
+            color: #ffe9a8;
+            font-style: italic;
+        }
+
+        @keyframes popIn {
+            0% { transform: scale(0.3) rotate(-4deg); opacity: 0; }
+            100% { transform: scale(1) rotate(0deg); opacity: 1; }
+        }
+
+        /* ---------- КОНФЕТТИ ---------- */
+        .confetti-container {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 999;
+            overflow: hidden;
+        }
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            opacity: 0;
+            animation: confettiFall linear forwards;
+        }
+        @keyframes confettiFall {
+            0% { transform: translateY(-20px) rotate(0deg) scale(0); opacity: 1; }
+            100% { transform: translateY(110vh) rotate(720deg) scale(1); opacity: 0; }
+        }
+
+        /* ---------- КНОПКА РЕСЕТ ---------- */
+        .reset-btn {
+            margin-top: 14px;
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 215, 0, 0.20);
+            color: #f5e6ff;
+            padding: 10px 32px;
+            border-radius: 40px;
+            cursor: pointer;
+            font-size: clamp(0.85rem, 2vw, 0.95rem);
+            transition: 0.3s;
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            font-weight: 500;
+            letter-spacing: 0.3px;
+        }
+        .reset-btn:hover {
+            background: rgba(255, 215, 0, 0.15);
+            color: #fff;
+        }
+        .reset-btn:active {
+            transform: scale(0.96);
+        }
+
+        /* ---------- АДАПТИВ ---------- */
+        @media (max-width: 500px) {
+            .card {
+                padding: 20px 16px 28px;
+                border-radius: 32px;
+            }
+            .instruction {
+                padding: 10px 18px;
+                margin-bottom: 12%;
+            }
+            .sky-wrapper {
+                height: clamp(150px, 42vw, 200px);
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .card {
+                padding: 40px 48px 48px;
+                max-width: 720px;
+            }
+            .sky-wrapper {
+                height: 280px;
+            }
+            .instruction {
+                padding: 14px 32px;
+            }
+        }
+
+        @media (orientation: landscape) and (max-height: 600px) {
+            .card {
+                padding: 16px 24px 20px;
+                border-radius: 28px;
+                max-width: 560px;
+            }
+            h1 { font-size: clamp(1.5rem, 4vw, 2rem); }
+            .sky-wrapper { height: 140px; }
+            .instruction { padding: 6px 16px; margin-bottom: 10px; }
+            .counter { margin-top: 6px; padding: 4px 16px; font-size: 0.8rem; }
+            .subtitle { margin-bottom: 8px; font-size: 0.75rem; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="card" id="app">
+    <h1>🎆 С Днём отца!</h1>
+    <div class="subtitle">✨ Самому лучшему папе ✨</div>
+
+    <div class="instruction" id="instruction">
+        <span class="icon">🎤</span>
+        <span class="text">Подуй в телефон — зажги салют</span>
+        <span class="icon">🎆</span>
+    </div>
+
+    <div class="sky-wrapper">
+        <div class="sky" id="sky"></div>
+    </div>
+
+    <div class="counter" id="counter">🎆 0 из 11 залпов</div>
+
+    <div class="wish" id="wishBlock">
+        <h2>🎆 Папочка, с Днём отца!</h2>
+        <p>
+            Спасибо за силу, поддержку и твёрдое плечо, на которое всегда можно опереться. Ты — мой пример и моя защита.<br />
+            Желаю тебе здоровья, энергии и как можно больше поводов для гордости. Пусть каждый день приносит радость, а рядом всегда будут те, кого ты любишь. 💪
+        </p>
+        <img src="https://github.com/EvelinaV-16/happy_birthday_card/blob/main/IMG_20250827_005500_036.jpg?raw=true" alt="sender photo" />
+        <p class="signature">От Эвелины ✨</p>
+    </div>
+
+    <button class="reset-btn" id="resetBtn">🎆 Запустить снова</button>
+</div>
+
+<div class="confetti-container" id="confettiContainer"></div>
+
+<script>
+    // ================================================================
+    // 1. НАСТРОЙКИ
+    // ================================================================
+    const FIREWORK_COUNT = 11;
+    let fireworks = [];       // массив объектов { element, fired: bool }
+    let allFired = false;
+    let isGameActive = true;
+
+    const skyEl = document.getElementById('sky');
+    const counterEl = document.getElementById('counter');
+    const wishBlock = document.getElementById('wishBlock');
+
+    // цвета салюта
+    const fireworkColors = [
+        '#ffd700', '#ff6b6b', '#4fc3f7', '#69db7c', '#b388ff',
+        '#ff9f43', '#ff6b9d', '#00e5ff', '#ffeb3b', '#e040fb', '#ff5252'
+    ];
+
+    // ================================================================
+    // 2. СОЗДАНИЕ ФОНА (звёзды + горизонт)
+    // ================================================================
+    function createStars() {
+        skyEl.innerHTML = '';
+
+        // звёзды
+        const starCount = 40;
+        for (let i = 0; i < starCount; i++) {
+            const star = document.createElement('div');
+            star.className = 'star';
+            star.style.left = Math.random() * 100 + '%';
+            star.style.top = Math.random() * 80 + '%';
+            star.style.animationDelay = (Math.random() * 3) + 's';
+            star.style.animationDuration = (2 + Math.random() * 2) + 's';
+            skyEl.appendChild(star);
+        }
+
+        // горизонт
+        const horizon = document.createElement('div');
+        horizon.className = 'horizon';
+        skyEl.appendChild(horizon);
+    }
+
+    // ================================================================
+    // 3. ПОЛНЫЙ СБРОС
+    // ================================================================
+    function createFireworks() {
+        createStars();
+        fireworks = [];
+        allFired = false;
+        isGameActive = true;
+        wishBlock.classList.remove('show');
+
+        // счётчик по сути считает уже "выстреленные"
+        updateCounter();
+        clearConfetti();
+    }
+
+    // ================================================================
+    // 4. ЗАЛП (выстрел одного салюта)
+    // ================================================================
+    function launchFirework() {
+        if (!isGameActive || allFired) return;
+
+        // считаем, сколько уже выстрелено
+        const firedCount = fireworks.length;
+        if (firedCount >= FIREWORK_COUNT) {
+            checkAllFired();
+            return;
+        }
+
+        // случайная позиция в небе (не у горизонта)
+        const x = 10 + Math.random() * 80;      // %
+        const y = 8 + Math.random() * 60;       // %
+        const color = fireworkColors[firedCount % fireworkColors.length];
+
+        const firework = document.createElement('div');
+        firework.className = 'firework';
+        firework.style.left = x + '%';
+        firework.style.top = y + '%';
+
+        // вспышка
+        const flash = document.createElement('div');
+        flash.className = 'flash';
+        firework.appendChild(flash);
+
+        // искры (10-14 штук)
+        const sparkCount = 10 + Math.floor(Math.random() * 5);
+        for (let i = 0; i < sparkCount; i++) {
+            const spark = document.createElement('div');
+            spark.className = 'spark';
+            spark.style.color = color;
+
+            // угол разлёта
+            const angle = (i / sparkCount) * Math.PI * 2 + Math.random() * 0.3;
+            const distance = 40 + Math.random() * 40; // px
+            const dx = Math.cos(angle) * distance;
+            const dy = Math.sin(angle) * distance;
+
+            spark.style.setProperty('--dx', dx + 'px');
+            spark.style.setProperty('--dy', dy + 'px');
+            spark.style.animation = `sparkFly ${0.8 + Math.random() * 0.4}s ease-out forwards`;
+            spark.style.animationDelay = (Math.random() * 0.05) + 's';
+
+            firework.appendChild(spark);
+        }
+
+        skyEl.appendChild(firework);
+
+        // запоминаем залп
+        fireworks.push({ element: firework, fired: true });
+
+        // убираем через время
+        setTimeout(() => {
+            if (firework.parentNode) firework.parentNode.removeChild(firework);
+        }, 1500);
+
+        if (navigator.vibrate) navigator.vibrate(15);
+        updateCounter();
+        checkAllFired();
+    }
+
+    // ================================================================
+    // 5. ПРОВЕРКА "ВСЁ ЛИ"
+    // ================================================================
+    function checkAllFired() {
+        if (allFired) return;
+        if (fireworks.length >= FIREWORK_COUNT) {
+            allFired = true;
+            isGameActive = false;
+            setTimeout(() => {
+                showWish();
+                launchConfetti();
+            }, 600);
+        }
+    }
+
+    // ================================================================
+    // 6. СЧЁТЧИК
+    // ================================================================
+    function updateCounter() {
+        counterEl.textContent = `🎆 ${fireworks.length} из ${FIREWORK_COUNT} залпов`;
+        if (allFired) {
+            counterEl.textContent = '🎆 Салют в честь папы!';
+        }
+    }
+
+    // ================================================================
+    // 7. ПОЖЕЛАНИЕ + КОНФЕТТИ
+    // ================================================================
+    function showWish() {
+        wishBlock.classList.add('show');
+    }
+
+    function launchConfetti() {
+        const container = document.getElementById('confettiContainer');
+        const colors = ['#ffd700', '#ff6b6b', '#4fc3f7', '#69db7c', '#b388ff', '#ff9f43', '#ff6b9d'];
+        for (let i = 0; i < 150; i++) {
+            const el = document.createElement('div');
+            el.className = 'confetti';
+            el.style.left = Math.random() * 100 + '%';
+            el.style.top = '-10px';
+            el.style.background = colors[Math.floor(Math.random() * colors.length)];
+            el.style.width = (Math.random() * 10 + 4) + 'px';
+            el.style.height = (Math.random() * 10 + 4) + 'px';
+            el.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+            el.style.animationDuration = (Math.random() * 2.5 + 1.5) + 's';
+            el.style.animationDelay = (Math.random() * 2) + 's';
+            container.appendChild(el);
+        }
+        setTimeout(() => clearConfetti(), 5000);
+    }
+
+    function clearConfetti() {
+        document.getElementById('confettiContainer').innerHTML = '';
+    }
+
+    // ================================================================
+    // 8. МИКРОФОН
+    // ================================================================
+    let audioContext = null;
+    let analyser = null;
+    let dataArray = null;
+    let isListening = false;
+    let blowCooldown = false;
+
+    function initAudio() {
+        if (audioContext) return;
+
+        try {
+            audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            analyser = audioContext.createAnalyser();
+            analyser.fftSize = 512;
+            analyser.smoothingTimeConstant = 0.8;
+            dataArray = new Uint8Array(analyser.frequencyBinCount);
+
+            navigator.mediaDevices.getUserMedia({ audio: true, video: false })
+                .then(stream => {
+                    const source = audioContext.createMediaStreamSource(stream);
+                    source.connect(analyser);
+                    isListening = true;
+                    detectBlow();
+                })
+                .catch(err => {
+                    console.warn('Микрофон не доступен:', err);
+                });
+        } catch (e) {
+            console.warn('WebAudio не поддерживается');
+        }
+    }
+
+    function detectBlow() {
+        if (!isListening || !analyser) return;
+
+        analyser.getByteFrequencyData(dataArray);
+
+        let sum = 0;
+        for (let i = 0; i < dataArray.length; i++) {
+            sum += dataArray[i];
+        }
+        const avg = sum / dataArray.length;
+
+        const BLOW_THRESHOLD = 55;
+
+        if (avg > BLOW_THRESHOLD && !blowCooldown && !allFired) {
+            blowCooldown = true;
+            launchFirework();
+
+            if (navigator.vibrate) navigator.vibrate(
