@@ -613,4 +613,43 @@
             blowCooldown = true;
             launchFirework();
 
-            if (navigator.vibrate) navigator.vibrate(
+            if (navigator.vibrate) navigator.vibrate(20);
+
+            setTimeout(() => {
+                blowCooldown = false;
+            }, 600);
+        }
+
+        requestAnimationFrame(detectBlow);
+    }
+
+    // ================================================================
+    // 9. ЗАПУСК
+    // ================================================================
+    createFireworks();
+
+    setTimeout(() => {
+        initAudio();
+    }, 300);
+
+    document.addEventListener('click', () => {
+        if (!audioContext) initAudio();
+    }, { once: true });
+
+    document.addEventListener('touchstart', () => {
+        if (!audioContext) initAudio();
+    }, { once: true });
+
+    // ================================================================
+    // 10. РЕСЕТ
+    // ================================================================
+    document.getElementById('resetBtn').addEventListener('click', () => {
+        createFireworks();
+        clearConfetti();
+        allFired = false;
+        isGameActive = true;
+    });
+</script>
+
+</body>
+</html>
