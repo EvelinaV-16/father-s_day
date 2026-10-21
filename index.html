@@ -156,20 +156,22 @@
             pointer-events: none;
         }
 
-        /* искры */
+        /* искры — крупные, с тройным свечением */
         .spark {
             position: absolute;
-            width: 6px;
-            height: 6px;
+            width: 10px;
+            height: 10px;
             border-radius: 50%;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
             opacity: 0;
-            box-shadow: 0 0 10px currentColor, 0 0 20px currentColor;
+            box-shadow:
+                0 0 15px currentColor,
+                0 0 30px currentColor,
+                0 0 45px currentColor;
         }
 
-        /* анимация: искра разлетается, покачиваясь и затухая */
         @keyframes sparkFly {
             0% {
                 transform: translate(-50%, -50%) scale(0.3);
@@ -184,11 +186,11 @@
             }
         }
 
-        /* вспышка в центре залпа */
+        /* вспышка в центре залпа — крупнее */
         .flash {
             position: absolute;
-            width: 20px;
-            height: 20px;
+            width: 30px;
+            height: 30px;
             border-radius: 50%;
             top: 50%;
             left: 50%;
@@ -200,8 +202,8 @@
 
         @keyframes flashPop {
             0% { transform: translate(-50%, -50%) scale(0); opacity: 1; }
-            50% { transform: translate(-50%, -50%) scale(3); opacity: 0.8; }
-            100% { transform: translate(-50%, -50%) scale(5); opacity: 0; }
+            50% { transform: translate(-50%, -50%) scale(4); opacity: 0.9; }
+            100% { transform: translate(-50%, -50%) scale(7); opacity: 0; }
         }
 
         /* ---------- СЧЁТЧИК ---------- */
@@ -374,7 +376,7 @@
         <h2>🎆 Папочка, с Днём отца!</h2>
         <p>
             Спасибо за то, что ты есть) За поддержку, смешные шутки и ещё много чего. Ты самый классный 💖<br />
-            Желаю тебе здоровья, энергии и как можно больше поводов для радости. Пусть каждый день приносит что-то позитивное, а прльлемы бустро и дегко решаются. 💪
+            Желаю тебе здоровья, энергии и как можно больше поводов для радости. Пусть каждый день приносит что-то позитивное, а проблемы быстро и легко решаются. 💪
         </p>
         <img src="https://github.com/EvelinaV-16/happy_birthday_card/blob/main/IMG_20250827_005500_036.jpg?raw=true" alt="sender photo" />
         <p class="signature">От Эвелины ✨</p>
@@ -390,7 +392,7 @@
     // 1. НАСТРОЙКИ
     // ================================================================
     const FIREWORK_COUNT = 11;
-    let fireworks = [];       // массив объектов { element, fired: bool }
+    let fireworks = [];
     let allFired = false;
     let isGameActive = true;
 
@@ -398,10 +400,19 @@
     const counterEl = document.getElementById('counter');
     const wishBlock = document.getElementById('wishBlock');
 
-    // цвета салюта
+    // яркая неоновая палитра
     const fireworkColors = [
-        '#ffd700', '#ff6b6b', '#4fc3f7', '#69db7c', '#b388ff',
-        '#ff9f43', '#ff6b9d', '#00e5ff', '#ffeb3b', '#e040fb', '#ff5252'
+        '#ffd700', // золотой
+        '#ff4757', // ярко-красный
+        '#00d4ff', // небесно-голубой
+        '#2ed573', // ярко-зелёный
+        '#a55eea', // фиолетовый
+        '#ff9f1a', // оранжевый
+        '#ff6bcb', // розовый
+        '#00f0ff', // циан
+        '#fff200', // жёлтый
+        '#d633ff', // маджента
+        '#ff3838'  // алый
     ];
 
     // ================================================================
@@ -410,7 +421,6 @@
     function createStars() {
         skyEl.innerHTML = '';
 
-        // звёзды
         const starCount = 40;
         for (let i = 0; i < starCount; i++) {
             const star = document.createElement('div');
@@ -422,7 +432,6 @@
             skyEl.appendChild(star);
         }
 
-        // горизонт
         const horizon = document.createElement('div');
         horizon.className = 'horizon';
         skyEl.appendChild(horizon);
@@ -437,8 +446,6 @@
         allFired = false;
         isGameActive = true;
         wishBlock.classList.remove('show');
-
-        // счётчик по сути считает уже "выстреленные"
         updateCounter();
         clearConfetti();
     }
@@ -449,16 +456,14 @@
     function launchFirework() {
         if (!isGameActive || allFired) return;
 
-        // считаем, сколько уже выстрелено
         const firedCount = fireworks.length;
         if (firedCount >= FIREWORK_COUNT) {
             checkAllFired();
             return;
         }
 
-        // случайная позиция в небе (не у горизонта)
-        const x = 10 + Math.random() * 80;      // %
-        const y = 8 + Math.random() * 60;       // %
+        const x = 10 + Math.random() * 80;
+        const y = 8 + Math.random() * 60;
         const color = fireworkColors[firedCount % fireworkColors.length];
 
         const firework = document.createElement('div');
@@ -471,36 +476,53 @@
         flash.className = 'flash';
         firework.appendChild(flash);
 
-        // искры (10-14 штук)
-        const sparkCount = 10 + Math.floor(Math.random() * 5);
-        for (let i = 0; i < sparkCount; i++) {
+        // ВНЕШНЕЕ КОЛЬЦО — крупные цветные искры, летят далеко
+        const outerCount = 16 + Math.floor(Math.random() * 4); // 16-19
+        for (let i = 0; i < outerCount; i++) {
             const spark = document.createElement('div');
             spark.className = 'spark';
             spark.style.color = color;
 
-            // угол разлёта
-            const angle = (i / sparkCount) * Math.PI * 2 + Math.random() * 0.3;
-            const distance = 40 + Math.random() * 40; // px
+            const angle = (i / outerCount) * Math.PI * 2 + Math.random() * 0.3;
+            const distance = 70 + Math.random() * 60; // 70-130px
             const dx = Math.cos(angle) * distance;
             const dy = Math.sin(angle) * distance;
 
             spark.style.setProperty('--dx', dx + 'px');
             spark.style.setProperty('--dy', dy + 'px');
-            spark.style.animation = `sparkFly ${0.8 + Math.random() * 0.4}s ease-out forwards`;
+            spark.style.animation = `sparkFly ${1.1 + Math.random() * 0.5}s ease-out forwards`;
             spark.style.animationDelay = (Math.random() * 0.05) + 's';
 
             firework.appendChild(spark);
         }
 
-        skyEl.appendChild(firework);
+        // ВНУТРЕННЕЕ КОЛЬЦО — мелкие белые искры, летят близко
+        const innerCount = 8 + Math.floor(Math.random() * 4); // 8-11
+        for (let i = 0; i < innerCount; i++) {
+            const spark = document.createElement('div');
+            spark.className = 'spark';
+            spark.style.color = '#ffffff';
+            spark.style.width = '7px';
+            spark.style.height = '7px';
 
-        // запоминаем залп
+            const angle = (i / innerCount) * Math.PI * 2 + Math.random() * 0.5;
+            const distance = 30 + Math.random() * 25; // 30-55px
+            const dx = Math.cos(angle) * distance;
+            const dy = Math.sin(angle) * distance;
+
+            spark.style.setProperty('--dx', dx + 'px');
+            spark.style.setProperty('--dy', dy + 'px');
+            spark.style.animation = `sparkFly ${0.7 + Math.random() * 0.3}s ease-out forwards`;
+
+            firework.appendChild(spark);
+        }
+
+        skyEl.appendChild(firework);
         fireworks.push({ element: firework, fired: true });
 
-        // убираем через время
         setTimeout(() => {
             if (firework.parentNode) firework.parentNode.removeChild(firework);
-        }, 1500);
+        }, 1900);
 
         if (navigator.vibrate) navigator.vibrate(15);
         updateCounter();
